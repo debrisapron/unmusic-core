@@ -1,4 +1,4 @@
-import * as _ from 'lodash/fp'
+import _ from 'lodash/fp'
 import concatScores from './concatScores'
 import getArpeggio from './getArpeggio'
 import getScore from './getScore'

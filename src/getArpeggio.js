@@ -1,7 +1,7 @@
 // NOTE While the outer function is pure, inside it the design is very very
 // imperative, with uncontrolled mutation all over the shop. Might be good to
 // rethink...
-import * as _ from 'lodash/fp'
+import _ from 'lodash/fp'
 import * as actionHelpers from './actionHelpers'
 
 function LoopList(arr) {

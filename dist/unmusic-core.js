@@ -1108,11 +1108,6 @@ var _baseConvert = baseConvert;
 var _ = lodash_min.runInContext();
 var fp = _baseConvert(_, _);
 
-var _$1 = /*#__PURE__*/Object.freeze({
-	default: fp,
-	__moduleExports: fp
-});
-
 var nearley = createCommonjsModule(function (module) {
 (function(root, factory) {
     if (module.exports) {
@@ -1795,7 +1790,7 @@ function LoopList(arr) {
 function getArpeggio(actions, { dur = 1/16, patt = ['u'] }) {
   let length = lengthOf(actions);
   let payloads = actions.map((action) => action.payload);
-  let pattLoop = LoopList(undefined(patt) ? patt : patt.split(''));
+  let pattLoop = LoopList(fp.isArray(patt) ? patt : patt.split(''));
   let prevNote;
 
   function getTransposition() {
@@ -1810,7 +1805,7 @@ function getArpeggio(actions, { dur = 1/16, patt = ['u'] }) {
   // direction (i.e. we've hit boundary of chord), returns null.
   function getNextNote(chord) {
     let dir = getDir();
-    let sortedChord = undefined((note) => note.nn * dir, chord);
+    let sortedChord = fp.sortBy((note) => note.nn * dir, chord);
     if (!prevNote) { return sortedChord[0] }
 
     return dir === 1
@@ -1856,7 +1851,7 @@ function getArpeggio(actions, { dur = 1/16, patt = ['u'] }) {
       if (!note) { return null }
       return { ...note, nn: note.nn + getTransposition(), time, dur }
     });
-    return undefined(notesAndRests)
+    return fp.compact(notesAndRests)
   }
 
   return getArpeggioNotes().map((payload) => ({ payload, type: 'NOTE' }))
@@ -1949,31 +1944,31 @@ function mixScores(scores) {
 function wrapScoringFunction(fn) {
   return fn.length === 1
     ? (thing) => fn(getScore(thing))
-    : undefined((options, thing) => fn(options, getScore(thing)))
+    : fp.curry((options, thing) => fn(options, getScore(thing)))
 }
 
 let arpeg = wrapScoringFunction((opts, score) => {
-  score = undefined(score);
-  let [noteActions, nonNoteActions] = undefined((action) => {
+  score = fp.clone(score);
+  let [noteActions, nonNoteActions] = fp.partition((action) => {
     return action.type === 'NOTE'
   }, score.actions);
   noteActions = getArpeggio(noteActions, opts);
-  score.actions = undefined('payload.time', noteActions.concat(nonNoteActions));
+  score.actions = fp.sortBy('payload.time', noteActions.concat(nonNoteActions));
   return score
 });
 
 let config = wrapScoringFunction((opts, score) => {
-  return undefined('config', undefined(score.config || {}, opts), score)
+  return fp.set('config', fp.merge(score.config || {}, opts), score)
 });
 
 function flow(...args) {
-  if (undefined(args[0])) { return undefined(args) }
+  if (fp.isFunction(args[0])) { return fp.pipe(args) }
   let [thing, ...fns] = args;
-  return undefined(fns)(getScore(thing))
+  return fp.pipe(fns)(getScore(thing))
 }
 
 let loop = wrapScoringFunction((score) => {
-  return undefined('loop', true, score)
+  return fp.set('loop', true, score)
 });
 
 function mix(...args) {
@@ -1981,7 +1976,7 @@ function mix(...args) {
 }
 
 let offset = wrapScoringFunction((amount, score) => {
-  score = undefined(score);
+  score = fp.cloneDeep(score);
   score.actions.forEach(({ payload, type }) => {
     if (type === 'NOOP') { return }
     payload.offset = amount;
@@ -1990,7 +1985,7 @@ let offset = wrapScoringFunction((amount, score) => {
 });
 
 let arrange = wrapScoringFunction((handler, score) => {
-  score = undefined(score);
+  score = fp.cloneDeep(score);
   score.actions.forEach(({ payload, type }) => {
     if (type === 'NOOP') { return }
     payload.handlers = payload.handlers || [];
@@ -2000,16 +1995,16 @@ let arrange = wrapScoringFunction((handler, score) => {
 });
 
 function seq(...args) {
-  let [fns, scores] = undefined(undefined, args);
-  return undefined(fns)(concatScores(scores))
+  let [fns, scores] = fp.partition(fp.isFunction, args);
+  return fp.pipe(fns)(concatScores(scores))
 }
 
 let tempo = wrapScoringFunction((bpm, score) => {
-  return undefined('tempo', bpm, score)
+  return fp.set('tempo', bpm, score)
 });
 
 let tran = wrapScoringFunction((amount, score) => {
-  score = undefined(score);
+  score = fp.cloneDeep(score);
   score.actions.forEach(({ payload }) => {
     if (payload.nn == null) { return }
     payload.nn = payload.nn + amount;
