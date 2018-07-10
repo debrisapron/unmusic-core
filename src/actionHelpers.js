@@ -1,5 +1,5 @@
-import _ from 'lodash/fp'
-import evalUmlang from './umlang/eval'
+let _ = require('lodash/fp')
+let evalUmlang = require('./umlang/eval')
 
 function nudge(amount, actions) {
   return actions.map((action) => {
@@ -13,34 +13,40 @@ function endOf(action) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export function wrap(actions) {
+function wrap(actions) {
   return { actions }
 }
 
-export function lengthOf(actions) {
+function lengthOf(actions) {
   return endOf(_.last(actions))
 }
 
-export function get(thing) {
+function get(thing) {
   return (Array.isArray(thing) && thing) || thing.actions || evalUmlang(thing)
 }
 
-export function concat(actionLists) {
+function concat(actionLists) {
   return actionLists.reduce((acc, curr) => {
     return acc.concat(nudge(lengthOf(acc), curr))
   })
 }
 
 // Remove any redundant NOOP actions
-export function clean(actions) {
+function clean(actions) {
   let lastIndex = actions.length - 1
   return actions.filter((action, i) => {
     // Include all non-NOOP actions
-    if (action.type !== 'NOOP') { return true }
+    if (action.type !== 'NOOP') {
+      return true
+    }
     // Reject NOOP actions unless they are at the end
-    if (i !== lastIndex) { return false }
+    if (i !== lastIndex) {
+      return false
+    }
     // Reject redundant NOOP actions (i.e. onset during another NOOP action)
     let prevAction = actions[i - 1]
     return action.payload.time > endOf(prevAction)
   })
 }
+
+module.exports = { wrap, lengthOf, get, concat, clean }

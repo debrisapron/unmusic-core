@@ -1,8 +1,8 @@
 // NOTE While the outer function is pure, inside it the design is very very
 // imperative, with uncontrolled mutation all over the shop. Might be good to
 // rethink...
-import _ from 'lodash/fp'
-import * as actionHelpers from './actionHelpers'
+let _ = require('lodash/fp')
+let actionHelpers = require('./actionHelpers')
 
 function LoopList(arr) {
   let i = 0
@@ -17,7 +17,9 @@ function LoopList(arr) {
 
   function advance() {
     i++
-    if (i >= arr.length) { i = 0 }
+    if (i >= arr.length) {
+      i = 0
+    }
     return current()
   }
 
@@ -26,7 +28,7 @@ function LoopList(arr) {
 
 // TODO Make sure length of arpeg is never longer than length of sequence (will
 // require sorting notes & non-notes here).
-export default function getArpeggio(actions, { dur = 1/16, patt = ['u'] }) {
+function getArpeggio(actions, { dur = 1 / 16, patt = ['u'] }) {
   let length = actionHelpers.lengthOf(actions)
   let payloads = actions.map((action) => action.payload)
   let pattLoop = LoopList(_.isArray(patt) ? patt : patt.split(''))
@@ -37,7 +39,12 @@ export default function getArpeggio(actions, { dur = 1/16, patt = ['u'] }) {
   }
 
   function getDir() {
-    return pattLoop.current().toLowerCase().startsWith('d') ? -1 : 1
+    return pattLoop
+      .current()
+      .toLowerCase()
+      .startsWith('d')
+      ? -1
+      : 1
   }
 
   // Gets next note in current direction (-1 or +1). If no note is found in that
@@ -45,7 +52,9 @@ export default function getArpeggio(actions, { dur = 1/16, patt = ['u'] }) {
   function getNextNote(chord) {
     let dir = getDir()
     let sortedChord = _.sortBy((note) => note.nn * dir, chord)
-    if (!prevNote) { return sortedChord[0] }
+    if (!prevNote) {
+      return sortedChord[0]
+    }
 
     return dir === 1
       ? sortedChord.find((note) => note.nn > prevNote.nn)
@@ -82,12 +91,16 @@ export default function getArpeggio(actions, { dur = 1/16, patt = ['u'] }) {
 
   function getArpeggioNotes() {
     let times = []
-    for (let f = 0; f < length; f += dur) { times.push(f) }
+    for (let f = 0; f < length; f += dur) {
+      times.push(f)
+    }
     let notesAndRests = times.map((time) => {
       let chord = getChordPlayingAtTime(time)
       let note = getNoteOfChord(chord)
       prevNote = note
-      if (!note) { return null }
+      if (!note) {
+        return null
+      }
       return { ...note, nn: note.nn + getTransposition(), time, dur }
     })
     return _.compact(notesAndRests)
@@ -95,3 +108,5 @@ export default function getArpeggio(actions, { dur = 1/16, patt = ['u'] }) {
 
   return getArpeggioNotes().map((payload) => ({ payload, type: 'NOTE' }))
 }
+
+module.exports = getArpeggio

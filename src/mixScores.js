@@ -1,5 +1,5 @@
-import _ from 'lodash/fp'
-import * as actionHelpers from './actionHelpers'
+let _ = require('lodash/fp')
+let actionHelpers = require('./actionHelpers')
 
 // Repeat or trim a list of actions to the given length.
 function extend(actions, length) {
@@ -7,9 +7,7 @@ function extend(actions, length) {
   let wholeRepetitions = Math.floor(length / loopLength)
   let lastRepetitionLength = length % loopLength
   let lastActions = trim(lastRepetitionLength, actions)
-  let actionLists = wholeRepetitions
-    ? Array(wholeRepetitions).fill(actions)
-    : []
+  let actionLists = wholeRepetitions ? Array(wholeRepetitions).fill(actions) : []
   actionLists.push(lastActions)
   return actionHelpers.concat(actionLists)
 }
@@ -48,15 +46,16 @@ function pairLcm(a, b) {
   if (a === 0 || b === 0) return 0
   a = Math.abs(a)
   b = Math.abs(b)
-  return a / pairGcd(a, b) * b
+  return (a / pairGcd(a, b)) * b
 }
 
 function lcm(values) {
   return values.reduce(pairLcm)
 }
 
-export default function mixScores(scores) {
-  let [loops, nonLoops] = _.partition((score) => score.loop, scores)
+function mixScores(scores) {
+  let [loops, nonLoops] = _
+    .partition((score) => score.loop, scores)
     .map((scores) => scores.map(actionHelpers.get))
 
   if (loops.length) {
@@ -77,3 +76,5 @@ export default function mixScores(scores) {
   if (!nonLoops.length) score.loop = true
   return score
 }
+
+module.exports = mixScores
