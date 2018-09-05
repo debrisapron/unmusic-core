@@ -1,6 +1,6 @@
 {
   "name": "unmusic-core",
-  "main": "src/index.js",
+  "main": "built/index.js",
   "version": "0.1.0",
   "description": "",
   "scripts": {
@@ -9,10 +9,12 @@
   },
   "author": "DEBRIS APRON <debrisapron@gmail.com>",
   "devDependencies": {
-    "jest": "^23.4.0",
-    "nearley": "^2.11.1"
+    "@types/lodash": "^4.14.113",
+    "@types/nearley": "^2.11.0",
+    "jest": "^23.4.0"
   },
   "dependencies": {
-    "lodash": "^4.17.5"
+    "lodash": "^4.17.10",
+    "nearley": "^2.15.0"
   }
 }

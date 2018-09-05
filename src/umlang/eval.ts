@@ -1,6 +1,7 @@
-let _ = require('lodash/fp')
-let nearley = require('nearley')
-let grammar = require('./grammar')
+import * as _ from 'lodash/fp'
+import { Parser as NearleyParser, Grammar as NearleyGrammar } from 'nearley'
+import { Action, ParserContext, Parsing, ParsingType } from '../types'
+import * as compiledGrammar from './grammar'
 
 let DEFAULT_DURATION = 1 / 4
 let PARAM_ALIASES = {
@@ -43,14 +44,14 @@ function nnFrom(instruction) {
   throw new Error('This note type is unknown to the score generator')
 }
 
-function noteActionFrom(instruction) {
+function noteActionFrom(instruction): Action {
   let nn = nnFrom(instruction)
   let payload = _.omit(['oct'], instruction.context)
   payload = _.set('nn', nn, payload)
   return { payload, type: 'NOTE' }
 }
 
-function trigActionFrom(instruction) {
+function trigActionFrom(instruction): Action {
   let payload = _.omit(['oct'], instruction.context)
   payload = _.set('name', instruction.data, payload)
   return { payload, type: 'TRIG' }
@@ -94,57 +95,63 @@ function normalizeParamName(param) {
   return PARAM_ALIASES[param] || param
 }
 
-function generateIntermediate(parsings, context = { time: 0, oct: 0, dur: DEFAULT_DURATION }) {
+function generateIntermediate(
+  parsings: Parsing[],
+  context: ParserContext = { time: 0, oct: 0, dur: DEFAULT_DURATION }
+) {
   return _.compact(
     parsings.map((parsing) => {
-      let [type, data] = parsing
       let dur = context.dur
 
       // For settings, apply the setting to the context object & return.
-      if (type === 'SETTING') {
-        context = _.set(normalizeParamName(data.param), data.value, context)
+      if (parsing.type === ParsingType.Setting) {
+        context = { ...context, [normalizeParamName(parsing.data.param)]: parsing.data.value }
         return null
       }
 
       // For octave changes, apply the octave to the context object & return.
-      if (type === 'OCTAVE_CHANGE') {
-        context = _.set('oct', context.oct + data, context)
+      if (parsing.type === ParsingType.OctaveChange) {
+        context = { ...context, oct: context.oct + parsing.data }
         return null
       }
+
+      let newData = parsing.data
 
       // For chord groups, run the members of the chord through
       // generateIntermediate, set all the members to start at the current time
       // and set the group duration to the duration of the longest member.
       // NOTE It is not necessary to optimize group members since a group cannot
       // contain rests.
-      if (type === 'CHORD_GROUP') {
-        data = generateIntermediate(data, context)
-        data = data.map(_.set('context.time', context.time))
-        dur = _.max(data.map((ins) => ins.context.dur))
+      if (parsing.type === 'CHORD_GROUP') {
+        newData = _.max(
+          generateIntermediate(parsing.data, context)
+            .map(_.set('context.time', context.time))
+            .map((ins) => ins.context.dur)
+        )
       }
 
-      let instruction = { context, data, type }
+      let instruction = { context, data: newData, type: parsing.type }
       context = _.set('time', context.time + dur, context)
       return instruction
     })
   )
 }
 
-function parse(s) {
-  let parser = new nearley.Parser(grammar.ParserRules, grammar.ParserStart)
+let parse = (s: string): Parsing[] => {
+  let parser = new NearleyParser(NearleyGrammar.fromCompiled(compiledGrammar))
   parser.feed(s)
   let parsings = parser.results
   if (parsings.length > 1) {
     throw new Error('Syntax error in sequence: combination is ambiguous')
   }
-  return _.compact(parsings[0])
+  return _.compact(parsings[0]).map((p) => ({ type: p[0], data: p[1] }))
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-function umlangEval(s) {
+let umlangEval = (s: string): Action[] => {
   s = (s || '').trim()
   return generateScore(optimizeIntermediate(generateIntermediate(parse(s))))
 }
 
-module.exports = umlangEval
+export default umlangEval
