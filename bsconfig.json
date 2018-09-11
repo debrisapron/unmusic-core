@@ -9,10 +9,11 @@
     "module": "commonjs",
     "in-source": true
   },
-  "suffix": ".js",
+  "suffix": ".bs.js",
   "bs-dependencies": [],
   "warnings": {
     "error": "+101"
   },
+  "namespace": true,
   "refmt": 3
 }

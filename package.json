@@ -1,34 +1,17 @@
 {
   "name": "unmusic-core",
-  "module": "src",
   "version": "0.1.0",
-  "description": "",
   "scripts": {
-    "test": "bsb -make-world && jest",
-    "build:grammar": "nearleyc src/umlang/grammar.ne > src/umlang/grammar.js"
+    "build": "bsb -make-world",
+    "start": "bsb -make-world -w",
+    "clean": "bsb -clean-world"
   },
-  "author": "DEBRIS APRON <debrisapron@gmail.com>",
+  "keywords": [
+    "BuckleScript"
+  ],
+  "author": "",
+  "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.42",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-beta.42",
-    "@babel/preset-env": "^7.0.0-beta.42",
-    "babel-core": "^7.0.0-0",
-    "babel-jest": "^22.4.3",
-    "babel-loader": "^8.0.0-beta",
-    "bs-platform": "^3.1.5",
-    "jest": "^22.4.3",
-    "nearley": "^2.11.1"
-  },
-  "dependencies": {
-    "babel-polyfill": "^6.26.0",
-    "lodash": "^4.17.5"
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-env"
-    ],
-    "plugins": [
-      "@babel/plugin-proposal-object-rest-spread"
-    ]
+    "bs-platform": "^4.0.5"
   }
 }
