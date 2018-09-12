@@ -14,9 +14,9 @@ TOKEN          -> NOTE
                 | SETTING
                 | CHORD_GROUP
 
-NOTE           -> PITCH_CLASS                   {% (data) => ['NOTE', { type: 'PITCH_CLASS', value: data[0] }] %}
-                | "M" INTEGER                   {% (data) => ['NOTE', { type: 'MIDI',        value: data[1] }] %}
-                | INTEGER                       {% (data) => ['NOTE', { type: 'RELATIVE',    value: data[0] }] %}
+NOTE           -> PITCH_CLASS                   {% (data) => ['NOTE', { kind: 'PITCH_CLASS', value: data[0] }] %}
+                | "M" INTEGER                   {% (data) => ['NOTE', { kind: 'MIDI',        value: data[1] }] %}
+                | INTEGER                       {% (data) => ['NOTE', { kind: 'RELATIVE',    value: data[0] }] %}
 PITCH_CLASS    -> [A-G] [b♭#♯]:?                {% (data) => str(data) %}
 
 TRIG           -> IDENTIFIER                    {% (data) => ['TRIG', data[0]] %}
