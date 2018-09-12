@@ -1,4 +1,5 @@
-type nearleyParsing;
+type payload;
+type nearleyParsing = (string, payload);
 
 [@bs.module "./nearleyParser"] external parseRaw: string => array(nearleyParsing) = "parse";
 /* type nearleyParsing =
@@ -8,4 +9,4 @@ type nearleyParsing;
    type parsing =
      | Note(noteType, string) */
 
-let parse = str => parseRaw(str);
+let parse = str => Array.to_list(parseRaw(str)) |> List.map(nearleyParsing => nearleyParsing);
