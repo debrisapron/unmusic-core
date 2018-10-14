@@ -5,6 +5,9 @@ let getScore = require('./getScore')
 let mixScores = require('./mixScores')
 let umlangEval = require('./umlang/eval')
 
+const GRID_WHITESPACE_CHARS = ['|', ' ']
+const GRID_REST_CHARS = ['.', '-', '_']
+
 // TODO Remove this. Too "clever".
 let wrapFn = (fn) => {
   return fn.length === 1
@@ -47,6 +50,19 @@ let flow = (...args) => {
   let [thing, ...fns] = args
   return _.pipe(fns)(getScore(thing))
 }
+
+let grid = (obj) =>
+  mixScores(
+    Object.keys(obj).map((action) => {
+      let rowStr = obj[action]
+      let rowScript = rowStr
+        .split('')
+        .filter((char) => !GRID_WHITESPACE_CHARS.includes(char))
+        .map((char) => (GRID_REST_CHARS.includes(char) ? '_' : action))
+        .join(' ')
+      return `/16 ${rowScript}`
+    })
+  )
 
 let loop = wrapFn((score) => {
   return _.set('loop', true, score)
@@ -92,6 +108,7 @@ module.exports = {
   arrange,
   config,
   flow,
+  grid,
   loop,
   mix,
   offset,
