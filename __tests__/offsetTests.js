@@ -10,7 +10,10 @@ describe('offset', () => {
     }
     let expScore = {
       actions: [
-        { type: 'NOTE', payload: { time: 0, nn: 69, dur: 1 / 4, offset: -1 / 32 } },
+        {
+          type: 'NOTE',
+          payload: { time: 0, nn: 69, dur: 1 / 4, offset: -1 / 32 }
+        },
         { type: 'NOOP', payload: { time: 3 / 4 } }
       ]
     }

@@ -63,8 +63,14 @@ describe('seq', () => {
     }
     let expected = {
       actions: [
-        { type: 'NOTE', payload: { time: 0, nn: 69, dur: 1 / 4, foo: 1, bar: 2 } },
-        { type: 'NOTE', payload: { time: 1 / 4, nn: 71, dur: 1 / 4, foo: 1, bar: 2 } }
+        {
+          type: 'NOTE',
+          payload: { time: 0, nn: 69, dur: 1 / 4, foo: 1, bar: 2 }
+        },
+        {
+          type: 'NOTE',
+          payload: { time: 1 / 4, nn: 71, dur: 1 / 4, foo: 1, bar: 2 }
+        }
       ]
     }
     expect(seq('A', 'B', fn1, fn2)).toMatchObject(expected)

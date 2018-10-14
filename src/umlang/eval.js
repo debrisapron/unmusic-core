@@ -80,7 +80,9 @@ function generateScore(instructions) {
 
 function optimizeIntermediate(instructions) {
   let lastIndex = instructions.length - 1
-  instructions = instructions.filter(({ type }, i) => type !== 'REST' || i === lastIndex)
+  instructions = instructions.filter(
+    ({ type }, i) => type !== 'REST' || i === lastIndex
+  )
   let last = _.last(instructions)
   if (last.type === 'REST') {
     // HACK all aboard for mutation central
@@ -94,7 +96,10 @@ function normalizeParamName(param) {
   return PARAM_ALIASES[param] || param
 }
 
-function generateIntermediate(parsings, context = { time: 0, oct: 0, dur: DEFAULT_DURATION }) {
+function generateIntermediate(
+  parsings,
+  context = { time: 0, oct: 0, dur: DEFAULT_DURATION }
+) {
   return _.compact(
     parsings.map((parsing) => {
       let [type, data] = parsing

@@ -156,7 +156,10 @@ describe('arpeg', () => {
     }
     let expScore = {
       actions: [
-        { type: 'NOTE', payload: { time: 0 / 8, nn: 69, dur: 1 / 8, foo: 'bar' } },
+        {
+          type: 'NOTE',
+          payload: { time: 0 / 8, nn: 69, dur: 1 / 8, foo: 'bar' }
+        },
         { type: 'NOTE', payload: { time: 1 / 8, nn: 73, dur: 1 / 8 } },
         { type: 'NOOP', payload: { time: 2 / 8 } }
       ]

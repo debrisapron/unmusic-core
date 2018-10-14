@@ -7,7 +7,9 @@ function extend(actions, length) {
   let wholeRepetitions = Math.floor(length / loopLength)
   let lastRepetitionLength = length % loopLength
   let lastActions = trim(lastRepetitionLength, actions)
-  let actionLists = wholeRepetitions ? Array(wholeRepetitions).fill(actions) : []
+  let actionLists = wholeRepetitions
+    ? Array(wholeRepetitions).fill(actions)
+    : []
   actionLists.push(lastActions)
   return actionHelpers.concat(actionLists)
 }
@@ -20,7 +22,11 @@ function trim(length, actions) {
   if (!actions.length) return actions
   if (actionHelpers.lengthOf(actions) > length) {
     let lastAction = _.last(actions)
-    lastAction = _.set('payload.dur', length - lastAction.payload.time, lastAction)
+    lastAction = _.set(
+      'payload.dur',
+      length - lastAction.payload.time,
+      lastAction
+    )
     actions = _.initial(actions).concat(lastAction)
   }
   return actions
@@ -54,9 +60,9 @@ function lcm(values) {
 }
 
 function mixScores(scores) {
-  let [loops, nonLoops] = _
-    .partition((score) => score.loop, scores)
-    .map((scores) => scores.map(actionHelpers.get))
+  let [loops, nonLoops] = _.partition((score) => score.loop, scores).map(
+    (scores) => scores.map(actionHelpers.get)
+  )
 
   if (loops.length) {
     // If there are any non-loops, adjust the length of any loops to the length

@@ -9,7 +9,9 @@ describe('umlang evaluator', () => {
 
   test('can eval a trigger', () => {
     let s = 'foo'
-    let expected = [{ type: 'TRIG', payload: { time: 0, name: 'foo', dur: 1 / 4 } }]
+    let expected = [
+      { type: 'TRIG', payload: { time: 0, name: 'foo', dur: 1 / 4 } }
+    ]
     expect(evalUmlang(s)).toMatchObject(expected)
   })
 
