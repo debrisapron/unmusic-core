@@ -1,5 +1,5 @@
 let _ = require('lodash/fp')
-let evalUmlang = require('./umlang/eval')
+let _eval = require('./umscript/eval')
 
 function nudge(amount, actions) {
   return actions.map((action) => {
@@ -22,7 +22,7 @@ function lengthOf(actions) {
 }
 
 function get(thing) {
-  return (Array.isArray(thing) && thing) || thing.actions || evalUmlang(thing)
+  return (Array.isArray(thing) && thing) || thing.actions || _eval(thing)
 }
 
 function concat(actionLists) {

@@ -1,8 +1,8 @@
 let nearley = require('nearley')
-let grammar = require('../../src/umlang/grammar')
+let grammar = require('../../src/umscript/grammar')
 
-describe('umlang parser', () => {
-  test('can parse an umlang string', () => {
+describe('umscript parser', () => {
+  test('can parse an umscript string', () => {
     let s = 'C /16 x=1 >'
     let expected = [
       ['NOTE', { type: 'PITCH_CLASS', value: 'C' }],

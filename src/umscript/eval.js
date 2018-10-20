@@ -147,9 +147,9 @@ function parse(s) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-function umlangEval(s) {
+function _eval(s) {
   s = (s || '').trim()
   return generateScore(optimizeIntermediate(generateIntermediate(parse(s))))
 }
 
-module.exports = umlangEval
+module.exports = _eval

@@ -3,7 +3,6 @@ let concatScores = require('./concatScores')
 let getArpeggio = require('./getArpeggio')
 let getScore = require('./getScore')
 let mixScores = require('./mixScores')
-let umlangEval = require('./umlang/eval')
 
 const GRID_WHITESPACE_CHARS = ['|', ' ']
 const GRID_REST_CHARS = ['.', '-', '_']
