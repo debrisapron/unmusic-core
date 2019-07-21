@@ -1,11 +1,11 @@
 {
   "name": "unmusic-core",
   "main": "src/index.js",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "",
   "scripts": {
     "test": "jest",
-    "build:grammar": "nearleyc src/umlang/grammar.ne > src/umlang/grammar.js"
+    "build:grammar": "nearleyc src/umscript/grammar.ne > src/umscript/grammar.js"
   },
   "author": "DEBRIS APRON <debrisapron@gmail.com>",
   "devDependencies": {
