@@ -87,6 +87,25 @@ let seq = (...args) => {
   return _.pipe(fns)(concatScores(scores))
 }
 
+let swing = wrapFn((amount, score) => {
+  if (!_.isNumber(amount) || amount < -1 || amount > 1) {
+    throw new Error('Swing amount must be between -1 and 1')
+  }
+  score = _.cloneDeep(score)
+  score.actions.forEach(({ payload, type }) => {
+    if (type === 'NOOP') {
+      return
+    }
+    let { time } = payload
+    let positionIn8ths = time * 8
+    let nearest8th = _.round(positionIn8ths)
+    let distanceFromNearest8th = Math.abs(positionIn8ths - nearest8th)
+    let swingOffsetInWholeNotes = (distanceFromNearest8th / 8) * amount
+    payload.time = time + swingOffsetInWholeNotes
+  })
+  return score
+})
+
 let tempo = wrapFn((bpm, score) => {
   return _.set('tempo', bpm, score)
 })
@@ -112,6 +131,7 @@ module.exports = {
   mix,
   offset,
   seq,
+  swing,
   tempo,
   tran
 }
